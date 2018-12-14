@@ -1,6 +1,6 @@
 {
   "name": "alexa-language-model-generator",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "description": "",
   "keywords": [],
   "main": "dist/alexa-language-model-generator.cjs.js",
@@ -24,7 +24,7 @@
     "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
     "start": "rollup -c rollup.config.ts -w",
     "test": "jest --coverage",
-    "test:watch": "jest --coverage --watch --verbose=false",
+    "test:watch": "jest --coverage --watch",
     "test:prod": "npm run lint && npm run test -- --no-cache",
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
