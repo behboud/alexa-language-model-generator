@@ -1,0 +1,96 @@
+{
+  "interactionModel": {
+    "languageModel": {
+      "invocationName": "mine helper",
+      "intents": [
+        {
+          "name": "RecipeIntent",
+          "samples": [
+            "how can I build {item}",
+            "how can I build a {item}",
+            "how can I build an {item}",
+            "how can I craft {item}",
+            "how can I craft a {item}",
+            "how can I craft an {item}",
+            "how can I get {item}",
+            "how can I get a {item}",
+            "how can I get an {item}",
+            "how can I make {item}",
+            "how can I make a {item}",
+            "how can I make an {item}",
+            "how can you build {item}",
+            "how can you build a {item}",
+            "how can you build an {item}",
+            "how can you craft {item}",
+            "how can you craft a {item}",
+            "how can you craft an {item}",
+            "how can you get {item}",
+            "how can you get a {item}",
+            "how can you get an {item}",
+            "how can you make {item}",
+            "how can you make a {item}",
+            "how can you make an {item}",
+            "how do I build {item}",
+            "how do I build a {item}",
+            "how do I build an {item}",
+            "how do I craft {item}",
+            "how do I craft a {item}",
+            "how do I craft an {item}",
+            "how do I get {item}",
+            "how do I get a {item}",
+            "how do I get an {item}",
+            "how do I make {item}",
+            "how do I make a {item}",
+            "how do I make an {item}",
+            "how do you build {item}",
+            "how do you build a {item}",
+            "how do you build an {item}",
+            "how do you craft {item}",
+            "how do you craft a {item}",
+            "how do you craft an {item}",
+            "how do you get {item}",
+            "how do you get a {item}",
+            "how do you get an {item}",
+            "how do you make {item}",
+            "how do you make a {item}",
+            "how do you make an {item}",
+            "how is {item} built",
+            "how is {item} crafted",
+            "how is {item} made",
+            "how is a {item} built",
+            "how is a {item} crafted",
+            "how is a {item} made",
+            "how is an {item} built",
+            "how is an {item} crafted",
+            "how is an {item} made",
+            "recipe for {item}",
+            "recipe for a {item}",
+            "recipe for an {item}",
+            "receipes for {item}",
+            "receipes for a {item}",
+            "receipes for an {item}"
+          ],
+          "slots": [{ "name": "item", "type": "ITEM_TYPE", "samples": [] }]
+        },
+        { "name": "AMAZON.CancelIntent", "samples": [], "slots": [] },
+        { "name": "AMAZON.HelpIntent", "samples": [], "slots": [] },
+        { "name": "AMAZON.StopIntent", "samples": [], "slots": [] },
+        { "name": "AMAZON.FallbackIntent", "samples": [], "slots": [] },
+        { "name": "AMAZON.RepeatIntent", "samples": [], "slots": [] }
+      ],
+      "types": [
+        {
+          "name": "ITEM_TYPE",
+          "values": [
+            { "id": "SNOWGOLEM", "name": { "value": "snow golem", "synonyms": [] } },
+            {
+              "id": "PILLARQUARTZBLOCK",
+              "name": { "value": "pillar quartz block", "synonyms": [] }
+            },
+            { "id": "FIREWORKROCKET", "name": { "value": "firework rocket", "synonyms": [] } }
+          ]
+        }
+      ]
+    }
+  }
+}

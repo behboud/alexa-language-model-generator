@@ -1,0 +1,21 @@
+RecipeIntent:
+    'en-US':
+      - how (can|do) (I|you) (build|craft|get|make) (|a|an) {item}
+      - how is (|a|an) {item} (built|crafted|made)
+      - (recipe|receipes) for (|a|an) {Item}
+    'en-GB':
+      - how (can|do) (I|you) (build|craft|get|make) (|a|an) {item}
+      - how is (|a|an) {item} (built|crafted|made)
+      - (recipe|receipes) for (|a|an) {Item}
+    'de-DE':
+      - wie (kann ich|kannst du) (|ein) {item} (bauen|craften|bekommen|machen)?
+      - wie (baue|crafte|bekomme|mache) ich (|ein) {item}
+      - wie (baust|craftest|bekommst|machst) du (|ein) {item}
+      - wie wird ein {item} (gebaut|gemacht|gecraftet)
+      - (Rezept|Rezepte) für ein {item}
+
+AMAZON.CancelIntent:
+AMAZON.HelpIntent:
+AMAZON.StopIntent:
+AMAZON.FallbackIntent:
+AMAZON.RepeatIntent:
