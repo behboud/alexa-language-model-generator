@@ -3,6 +3,7 @@ RecipeIntent:
       - how (can|do) (I|you) (build|craft|get|make) (|a|an) {item}
       - how is (|a|an) {item} (built|crafted|made)
       - (recipe|receipes) for (|a|an) {Item}
+      - take me to {street}
     'en-GB':
       - how (can|do) (I|you) (build|craft|get|make) (|a|an) {item}
       - how is (|a|an) {item} (built|crafted|made)

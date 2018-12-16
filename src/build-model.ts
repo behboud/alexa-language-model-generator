@@ -41,10 +41,22 @@ export const buildModelForLocale = (
           const sampleUtterance = sampleArrayOfArray
             .reduce((prev: string, curr: string): string => {
               if (curr && curr.substring(0, 1) === '{' && curr.substring(curr.length - 1) === '}') {
-                const slot = {
-                  name: curr.substring(1, curr.length - 1).toLowerCase(),
-                  type: curr.substring(1, curr.length - 1).toUpperCase() + '_TYPE',
+                const typeVar = curr.substring(1, curr.length - 1)
+                let slot = {
+                  name: typeVar.toLowerCase(),
+                  type: typeVar.toUpperCase() + '_TYPE',
                   samples: []
+                }
+                if (
+                  types &&
+                  (typeof types[typeVar] === 'string' || types[typeVar] instanceof String)
+                ) {
+                  const name = types[typeVar] as any
+                  slot = {
+                    name: typeVar.toLowerCase(),
+                    type: name,
+                    samples: []
+                  }
                 }
                 if (
                   intent.slots &&
@@ -73,34 +85,39 @@ export const buildModelForLocale = (
   })
   let customTypes: any = []
   if (types) {
-    customTypes = Object.keys(types).map(typeName => {
-      const slotType: SmapiSlotTypes = {
-        name: typeName.toUpperCase() + '_TYPE',
-        values: []
-      }
-      let typeValues: any = types[typeName]
-      if (Object.keys(typeValues).filter(typeValue => typeValue === locale).length > 0) {
-        typeValues = typeValues[locale]
-      }
-
-      typeValues.map((valueName: string) => {
-        let synonyms = []
-        if (Array.isArray(typeValues[valueName])) {
-          synonyms = [...typeValues[valueName]]
+    customTypes = Object.keys(types)
+      .map(typeName => {
+        if (typeof types[typeName] === 'string' || types[typeName] instanceof String) {
+          return
         }
-        slotType.values.push({
-          id: valueName
-            .replace(/\s/g, '')
-            .replace(/[^\x00-\x7F]/g, '')
-            .toUpperCase(),
-          name: {
-            value: valueName,
-            synonyms
+        const slotType: SmapiSlotTypes = {
+          name: typeName.toUpperCase() + '_TYPE',
+          values: []
+        }
+        let typeValues: any = types[typeName]
+        if (Object.keys(typeValues).filter(typeValue => typeValue === locale).length > 0) {
+          typeValues = typeValues[locale]
+        }
+
+        typeValues.map((valueName: string) => {
+          let synonyms = []
+          if (Array.isArray(typeValues[valueName])) {
+            synonyms = [...typeValues[valueName]]
           }
+          slotType.values.push({
+            id: valueName
+              .replace(/\s/g, '')
+              .replace(/[^\x00-\x7F]/g, '')
+              .toUpperCase(),
+            name: {
+              value: valueName,
+              synonyms
+            }
+          })
         })
+        return slotType
       })
-      return slotType
-    })
+      .filter(s => s !== undefined)
   }
   const interactionModel: SmapiInteractionModel = {
     interactionModel: {

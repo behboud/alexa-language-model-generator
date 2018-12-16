@@ -68,9 +68,17 @@
             "recipe for an {item}",
             "receipes for {item}",
             "receipes for a {item}",
-            "receipes for an {item}"
+            "receipes for an {item}",
+            "take me to {street}"
           ],
-          "slots": [{ "name": "item", "type": "ITEM_TYPE", "samples": [] }]
+          "slots": [
+            { "name": "item", "type": "ITEM_TYPE", "samples": [] },
+            {
+              "name": "street",
+              "type": "AMAZON.StreetAddress",
+              "samples": []
+            }
+          ]
         },
         { "name": "AMAZON.CancelIntent", "samples": [], "slots": [] },
         { "name": "AMAZON.HelpIntent", "samples": [], "slots": [] },
