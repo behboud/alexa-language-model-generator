@@ -8,6 +8,7 @@ import copy from 'rollup-plugin-copy-glob'
 import external from '@yelo/rollup-node-external'
 import builtins from 'rollup-plugin-node-builtins'
 import globals from 'rollup-plugin-node-globals'
+import shebang from '@enquer/rollup-plugin-shebang'
 
 const pkg = require('./package.json')
 
@@ -30,6 +31,7 @@ export default {
       watch: false
     }),
     // Allow json resolution
+    shebang(),
     json(),
     // Compile TypeScript files
     typescript({ useTsconfigDeclarationDir: true }),

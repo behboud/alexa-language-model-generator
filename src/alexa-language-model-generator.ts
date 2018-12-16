@@ -36,10 +36,14 @@ const { invocation, locales, intents, types, models } = program
 if (!existsSync(models)) {
   mkdirSync(models)
 }
+if (!invocation) {
+  console.error('Invocation Name is required. Use -i to add invocation name')
+  process.exit(1)
+}
 locales.split(',').map((locale: Locale) => {
   if (!existsSync(intents)) {
     console.error('You need to create an intents.yaml file')
-    process.exit()
+    process.exit(1)
   }
   const intentsJson = yaml.safeLoad(readFileSync(intents, 'utf8'))
   let typesJson = {}

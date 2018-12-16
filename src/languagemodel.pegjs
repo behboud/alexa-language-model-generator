@@ -36,4 +36,4 @@ _ "whitespace"
 = [ \t\n\r]*
 
 Word
-= _ word:$([A-Za-z0-9 \' \? \! \ü \ö \ä \ß])+ _ { return word; }
+= _ word:$([A-Za-z0-9 \' \? \! \ü \ö \ä \ß .])+ _ { return word; }

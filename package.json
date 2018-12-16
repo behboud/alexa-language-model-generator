@@ -1,11 +1,12 @@
 {
   "name": "alexa-language-model-generator",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "description": "",
   "keywords": [],
   "main": "dist/alexa-language-model-generator.cjs.js",
   "module": "dist/alexa-language-model-generator.es5.js",
   "typings": "dist/types/alexa-language-model-generator.d.ts",
+  "bin": "dist/alexa-language-model-generator.cjs.js",
   "files": [
     "dist"
   ],
@@ -84,6 +85,7 @@
   "devDependencies": {
     "@commitlint/cli": "^7.1.2",
     "@commitlint/config-conventional": "^7.1.2",
+    "@enquer/rollup-plugin-shebang": "0.0.4",
     "@types/commander": "^2.12.2",
     "@types/jest": "^23.3.2",
     "@types/js-yaml": "^3.11.2",
