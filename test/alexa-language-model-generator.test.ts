@@ -14,6 +14,6 @@ describe('Build Model', () => {
   })
   it('builds valid US model', () => {
     const im = buildModelForLocale('mine helper', 'en-US', intentsJson, typesJson)
-    expect(usModel).toEqual(im)
+    expect(im).toEqual(usModel)
   })
 })

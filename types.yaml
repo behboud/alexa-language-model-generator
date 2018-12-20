@@ -12,3 +12,4 @@ item:
     - Quarzsäule
     - Feuerwerksrakete
 street: AMAZON.StreetAddress
+housenumber: AMAZON.Number

@@ -2,12 +2,12 @@ RecipeIntent:
     'en-US':
       - how (can|do) (I|you) (build|craft|get|make) (|a|an) {item}
       - how is (|a|an) {item} (built|crafted|made)
-      - (recipe|receipes) for (|a|an) {Item}
-      - take me to {street}
+      - (recipe|receipes) for (|a|an) {item}
+      - take me to (|{street}|{housenumber} {street})
     'en-GB':
       - how (can|do) (I|you) (build|craft|get|make) (|a|an) {item}
       - how is (|a|an) {item} (built|crafted|made)
-      - (recipe|receipes) for (|a|an) {Item}
+      - (recipe|receipes) for (|a|an) {item}
     'de-DE':
       - wie (kann ich|kannst du) (|ein) {item} (bauen|craften|bekommen|machen)?
       - wie (baue|crafte|bekomme|mache) ich (|ein) {item}

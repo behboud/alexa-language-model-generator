@@ -40,37 +40,44 @@ export const buildModelForLocale = (
         lp.map((sampleArrayOfArray: Array<string>) => {
           const sampleUtterance = sampleArrayOfArray
             .reduce((prev: string, curr: string): string => {
-              if (curr && curr.substring(0, 1) === '{' && curr.substring(curr.length - 1) === '}') {
-                const typeVar = curr.substring(1, curr.length - 1)
-                let slot = {
-                  name: typeVar.toLowerCase(),
-                  type: typeVar.toUpperCase() + '_TYPE',
-                  samples: []
+              const re = /\{[^}]*?\}/g
+              if (curr) {
+                const matchedSlots = curr.match(re)
+                if (matchedSlots) {
+                  matchedSlots.filter(Boolean).forEach((slt: string) => {
+                    const typeVar = slt.substring(1, slt.length - 1)
+                    let slot = {
+                      name: typeVar.toLowerCase(),
+                      type: typeVar.toUpperCase() + '_TYPE',
+                      samples: []
+                    }
+                    console.log(slot)
+                    if (
+                      types &&
+                      (typeof types[typeVar] === 'string' || types[typeVar] instanceof String)
+                    ) {
+                      const name = types[typeVar] as any
+                      slot = {
+                        name: typeVar.toLowerCase(),
+                        type: name,
+                        samples: []
+                      }
+                    }
+                    if (
+                      intent.slots &&
+                      intent.slots.filter(sltSlot => sltSlot.name === slot.name).length === 0
+                    ) {
+                      intent.slots.push(slot)
+                    }
+                    slt = slt.toLowerCase()
+                  })
                 }
-                if (
-                  types &&
-                  (typeof types[typeVar] === 'string' || types[typeVar] instanceof String)
-                ) {
-                  const name = types[typeVar] as any
-                  slot = {
-                    name: typeVar.toLowerCase(),
-                    type: name,
-                    samples: []
-                  }
-                }
-                if (
-                  intent.slots &&
-                  intent.slots.filter(currSlot => currSlot.name === slot.name).length === 0
-                ) {
-                  intent.slots.push(slot)
-                }
-                curr = curr.toLowerCase()
               }
               if (curr === ' ') return prev.trimLeft() + curr.trimRight()
 
               return prev.trimLeft() + curr.trimRight() + ' '
             }, '')
-            .trimRight()
+            .trim()
           if (intent.samples) {
             intent.samples.push(sampleUtterance)
           }

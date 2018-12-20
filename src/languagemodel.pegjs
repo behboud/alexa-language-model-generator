@@ -13,24 +13,33 @@ LanguageModel = Expression
 Expression = head:MultiExpression _ tail:Expression* {
 if(!Array.isArray(head)) head = [].concat(head)
 if(!Array.isArray(tail)) tail = [].concat(tail)
-	
+
 return cartesian(...head, ...tail)
 }
 
 MultiExpression =  _ head:MultiWordExpression {return [head]}
-/ Word 
+/ Word
 / Slot
+
+
 
 
 MultiWordExpression = "(" wordArray:WordArray ")" {return [].concat(wordArray)}
 / "("_"|" wordArray:WordArray ")" {return [].concat(" ", wordArray)}
 
-WordArray = head:Word _ "|"+ _ tail:WordArray* {return [].concat(head, ...tail)}
-/ head:Word _ tail:WordArray* {return head + " "+ tail}
+WordArray = 
+  head:Word _ "|" _ tail:WordArray* {return [].concat(head, ...tail)}
+/ head:Slot _ "|" _ tail:WordArray* {return [].concat(head, ...tail)}
+/ head:Slot "|" tail:WordArray* {return [].concat(head, ...tail)}
+/ head:Word _ tail:WordArray*  {return head + " " + tail}
+/ head:Slot _ tail:WordArray* {return head + " " + tail}
+
+
+
 
 //TypeArray = "{" typeName:Word "}" {return {typeName}}
 
-Slot = "{" customSlot:Word "}" {return `{${customSlot}}`}
+Slot = _ customSlot:$(_"{" Word "}"_)+ {return `${customSlot} `;}
 
 _ "whitespace"
 = [ \t\n\r]*

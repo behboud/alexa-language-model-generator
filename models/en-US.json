@@ -1,7 +1,6 @@
 {
   "interactionModel": {
     "languageModel": {
-      "invocationName": "mine helper",
       "intents": [
         {
           "name": "RecipeIntent",
@@ -69,15 +68,14 @@
             "receipes for {item}",
             "receipes for a {item}",
             "receipes for an {item}",
-            "take me to {street}"
+            "take me to",
+            "take me to {street}",
+            "take me to {housenumber} {street}"
           ],
           "slots": [
-            { "name": "item", "type": "ITEM_TYPE", "samples": [] },
-            {
-              "name": "street",
-              "type": "AMAZON.StreetAddress",
-              "samples": []
-            }
+            { "name": "item", "samples": [], "type": "ITEM_TYPE" },
+            { "name": "street", "samples": [], "type": "AMAZON.StreetAddress" },
+            { "name": "housenumber", "samples": [], "type": "AMAZON.Number" }
           ]
         },
         { "name": "AMAZON.CancelIntent", "samples": [], "slots": [] },
@@ -86,16 +84,17 @@
         { "name": "AMAZON.FallbackIntent", "samples": [], "slots": [] },
         { "name": "AMAZON.RepeatIntent", "samples": [], "slots": [] }
       ],
+      "invocationName": "mine helper",
       "types": [
         {
           "name": "ITEM_TYPE",
           "values": [
-            { "id": "SNOWGOLEM", "name": { "value": "snow golem", "synonyms": [] } },
+            { "id": "SNOWGOLEM", "name": { "synonyms": [], "value": "snow golem" } },
             {
               "id": "PILLARQUARTZBLOCK",
-              "name": { "value": "pillar quartz block", "synonyms": [] }
+              "name": { "synonyms": [], "value": "pillar quartz block" }
             },
-            { "id": "FIREWORKROCKET", "name": { "value": "firework rocket", "synonyms": [] } }
+            { "id": "FIREWORKROCKET", "name": { "synonyms": [], "value": "firework rocket" } }
           ]
         }
       ]
