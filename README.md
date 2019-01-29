@@ -63,7 +63,7 @@ You can also install the tool globally and invoke it without npx:
 
 `-i, --invocation [path]`
 
-Invocation name file path (default invocation.yml)
+Invocation name file path (default models/invocation.yml)
 
 #### Locale
 
@@ -76,14 +76,14 @@ currently all equals: de-DE,en-AU,en-CA,en-GB,en-IN,en-US,es-ES,es-MX,fr-FR,ja-J
 
 `-n, --intents [path]`
 
-Intent file path where all intents are defined (default intents.yml)
+Intent file path where all intents are defined (default models/intents.yml)
 
 #### Types File Path
 
 `-t, --types [path]`
-Intent file path where all types are defined (default types.yml),
+Intent file path where all types are defined (default models/types.yml),
 
 #### Models Path
 
 `-m, --models [path]`
-Path to the folder where model JSON files should be stored (default model)
+Path to the folder where model JSON files should be stored (default models)

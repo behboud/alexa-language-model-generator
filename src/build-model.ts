@@ -130,7 +130,7 @@ export const buildModelForLocale = (
       .filter(s => s !== undefined)
   }
   if (invocations[locale] === undefined) {
-    throw new Error('No invocation name defined for locale' + locale)
+    throw new Error('No invocation name defined for locale ' + locale)
   } else {
     const interactionModel: SmapiInteractionModel = {
       interactionModel: {

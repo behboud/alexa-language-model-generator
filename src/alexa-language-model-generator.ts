@@ -11,8 +11,8 @@ program
   .version('0.1.12')
   .option(
     '-i, --invocation [path]',
-    'Invocation name file path (default invocation.yml)',
-    'invocation.yml'
+    'Invocation name file path (default models/invocation.yml)',
+    'models/invocation.yml'
   )
   .option(
     '-l, --locales [locales]',
@@ -21,17 +21,17 @@ program
   )
   .option(
     '-n, --intents [path]',
-    'Intent file path where all intents are defined (default intents.yml)',
-    'intents.yml'
+    'Intent file path where all intents are defined (default models/intents.yml)',
+    'models/intents.yml'
   )
   .option(
     '-t, --types [path]',
-    'Intent file path where all types are defined (default types.yml)',
-    'types.yml'
+    'Intent file path where all types are defined (default models/types.yml)',
+    'models/types.yml'
   )
   .option(
     '-m, --models [path]',
-    'Path to the folder where model json files should be stored (default model)',
+    'Path to the folder where model json files should be stored (default models)',
     'models'
   )
   .parse(process.argv)
