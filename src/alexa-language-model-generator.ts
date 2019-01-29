@@ -8,7 +8,7 @@ import { buildModelForLocale } from './build-model'
 const program = new Command('alexa-language-model-generator')
 
 program
-  .version('0.0.1')
+  .version('0.1.11')
   .option(
     '-i, --invocation [path]',
     'Invocation name file path (default invocation.yml)',
