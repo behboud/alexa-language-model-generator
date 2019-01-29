@@ -45,3 +45,41 @@ ice golem
 spice golem
 rice golem
 ```
+
+## Usage as CLI
+
+`npx alexa-language-model-generator -i invocation.yml -l "en-US" -n intents.yml -t types.yml -m models`
+
+You can also install the tool globally and invoke it without npx:
+`npm i -g alexa-language-model-generator`
+
+### Options
+
+#### Invocation File Path
+
+`-i, --invocation [path]`
+
+Invocation name file path (default invocation.yml)
+
+#### Locale
+
+`-l, --locales [locales]`
+Specific Locales separated by comma (default all)
+
+currently all equals: de-DE,en-AU,en-CA,en-GB,en-IN,en-US,es-ES,es-MX,fr-FR,ja-JP
+
+#### Intent File Path
+
+`-n, --intents [path]`
+
+Intent file path where all intents are defined (default intents.yml)
+
+#### Types File Path
+
+`-t, --types [path]`
+Intent file path where all types are defined (default types.yml),
+
+#### Models Path
+
+`-m, --models [path]`
+Path to the folder where model json files should be stored (default model)
