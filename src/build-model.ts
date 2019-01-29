@@ -1,6 +1,7 @@
 import { readFileSync } from 'fs'
 import * as peg from 'pegjs'
 import { resolve } from 'path'
+import { constantCase } from 'change-case'
 import {
   Locale,
   SmapiInteractionModel,
@@ -117,10 +118,7 @@ export const buildModelForLocale = (
             vName = valueName
           }
           slotType.values.push({
-            id: vName
-              .replace(/\s/g, '')
-              .replace(/[^\x00-\x7F]/g, '')
-              .toUpperCase(),
+            id: constantCase(vName),
             name: {
               value: vName,
               synonyms

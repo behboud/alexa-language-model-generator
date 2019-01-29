@@ -90,17 +90,17 @@
           "name": "ITEM_TYPE",
           "values": [
             {
-              "id": "SNOWGOLEM",
+              "id": "SNOW_GOLEM",
               "name": {
                 "synonyms": ["ice golem", "spice golem", "rice golem"],
                 "value": "snow golem"
               }
             },
             {
-              "id": "PILLARQUARTZBLOCK",
+              "id": "PILLAR_QUARTZ_BLOCK",
               "name": { "synonyms": [], "value": "pillar quartz block" }
             },
-            { "id": "FIREWORKROCKET", "name": { "synonyms": [], "value": "firework rocket" } }
+            { "id": "FIREWORK_ROCKET", "name": { "synonyms": [], "value": "firework rocket" } }
           ]
         }
       ]

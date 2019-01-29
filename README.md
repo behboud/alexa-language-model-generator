@@ -82,4 +82,4 @@ Intent file path where all types are defined (default types.yml),
 #### Models Path
 
 `-m, --models [path]`
-Path to the folder where model json files should be stored (default model)
+Path to the folder where model JSON files should be stored (default model)
