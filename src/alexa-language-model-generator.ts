@@ -49,7 +49,7 @@ locales.split(',').map((locale: Locale) => {
     console.error('You need to create an intents.yaml file')
     process.exit(1)
   }
-  const invocationJson = yaml.safeLoad(readFileSync(intents, 'utf8'))
+  const invocationJson = yaml.safeLoad(readFileSync(invocation, 'utf8'))
   const intentsJson = yaml.safeLoad(readFileSync(intents, 'utf8'))
   let typesJson = {}
   if (!existsSync(types)) {
@@ -57,7 +57,7 @@ locales.split(',').map((locale: Locale) => {
   } else {
     typesJson = yaml.safeLoad(readFileSync(types, 'utf8'))
   }
-  const im = buildModelForLocale(invocation.toLowerCase(), locale, intentsJson, typesJson)
+  const im = buildModelForLocale(invocationJson, locale, intentsJson, typesJson)
   try {
     writeFileSync(resolve(models, locale + '.json'), JSON.stringify(im), 'utf8')
   } catch (error) {
