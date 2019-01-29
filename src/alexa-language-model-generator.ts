@@ -9,7 +9,11 @@ const program = new Command('alexa-language-model-generator')
 
 program
   .version('0.0.1')
-  .option('-i, --invocation <name>', 'Invocation name')
+  .option(
+    '-i, --invocation [path]',
+    'Invocation name file path (default invocation.yml)',
+    'invocation.yml'
+  )
   .option(
     '-l, --locales [locales]',
     'Specific Locales seperated by comma (default all)',
@@ -36,8 +40,8 @@ const { invocation, locales, intents, types, models } = program
 if (!existsSync(models)) {
   mkdirSync(models)
 }
-if (!invocation) {
-  console.error('Invocation Name is required. Use -i to add invocation name')
+if (!existsSync(invocation)) {
+  console.error('Invocation Name file path is required. Use -i to add invocation file path')
   process.exit(1)
 }
 locales.split(',').map((locale: Locale) => {
@@ -45,6 +49,7 @@ locales.split(',').map((locale: Locale) => {
     console.error('You need to create an intents.yaml file')
     process.exit(1)
   }
+  const invocationJson = yaml.safeLoad(readFileSync(intents, 'utf8'))
   const intentsJson = yaml.safeLoad(readFileSync(intents, 'utf8'))
   let typesJson = {}
   if (!existsSync(types)) {

@@ -6,7 +6,8 @@ import {
   SmapiInteractionModel,
   IIntentAndTypeGrammar,
   SmapiLanguageModelIntent,
-  SmapiSlotTypes
+  SmapiSlotTypes,
+  InvocationName
 } from './index.d'
 
 export const languageModelParser = (): peg.Parser => {
@@ -19,7 +20,7 @@ export const languageModelParser = (): peg.Parser => {
 }
 
 export const buildModelForLocale = (
-  invocationName: string,
+  invocations: InvocationName,
   locale: Locale,
   intents: IIntentAndTypeGrammar,
   types: IIntentAndTypeGrammar
@@ -51,7 +52,6 @@ export const buildModelForLocale = (
                       type: typeVar.toUpperCase() + '_TYPE',
                       samples: []
                     }
-                    console.log(slot)
                     if (
                       types &&
                       (typeof types[typeVar] === 'string' || types[typeVar] instanceof String)
@@ -106,18 +106,23 @@ export const buildModelForLocale = (
           typeValues = typeValues[locale]
         }
 
-        typeValues.map((valueName: string) => {
-          let synonyms = []
-          if (Array.isArray(typeValues[valueName])) {
-            synonyms = [...typeValues[valueName]]
+        typeValues.map((valueName: string | { [key: string]: string }) => {
+          let synonyms: string[] = []
+          let vName = ''
+          if (typeof valueName === 'object') {
+            vName = Object.keys(valueName)[0]
+            const values = Object.values(valueName)
+            synonyms = synonyms.concat(...values)
+          } else {
+            vName = valueName
           }
           slotType.values.push({
-            id: valueName
+            id: vName
               .replace(/\s/g, '')
               .replace(/[^\x00-\x7F]/g, '')
               .toUpperCase(),
             name: {
-              value: valueName,
+              value: vName,
               synonyms
             }
           })
@@ -126,14 +131,18 @@ export const buildModelForLocale = (
       })
       .filter(s => s !== undefined)
   }
-  const interactionModel: SmapiInteractionModel = {
-    interactionModel: {
-      languageModel: {
-        invocationName,
-        intents: [...customIntents],
-        types: [...customTypes]
+  if (invocations[locale] === undefined) {
+    throw new Error('No invocation name defined for locale' + locale)
+  } else {
+    const interactionModel: SmapiInteractionModel = {
+      interactionModel: {
+        languageModel: {
+          invocationName: invocations[locale],
+          intents: [...customIntents],
+          types: [...customTypes]
+        }
       }
     }
+    return interactionModel
   }
-  return interactionModel
 }

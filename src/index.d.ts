@@ -4,6 +4,8 @@ export interface IIntentAndTypeGrammar {
   }
 }
 
+export type InvocationName = { [key in Locale]: string }
+
 export interface IServerlessInstance {
   cli: {
     log(str: string): void

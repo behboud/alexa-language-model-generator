@@ -3,17 +3,13 @@ import * as yaml from 'js-yaml'
 import { readFileSync } from 'fs'
 import { resolve } from 'path'
 
-let intentsJson = {}
-let typesJson = {}
-let usModel = {}
 describe('Build Model', () => {
-  beforeAll(() => {
-    intentsJson = yaml.safeLoad(readFileSync('intents.yaml', 'utf8'))
-    typesJson = yaml.safeLoad(readFileSync('types.yaml', 'utf8'))
-    usModel = JSON.parse(readFileSync(resolve('models', 'en-US.json'), 'utf8'))
-  })
   it('builds valid US model', () => {
-    const im = buildModelForLocale('mine helper', 'en-US', intentsJson, typesJson)
+    const intentsJson = yaml.safeLoad(readFileSync('intents.yml', 'utf8'))
+    const typesJson = yaml.safeLoad(readFileSync('types.yml', 'utf8'))
+    const invocationJson = yaml.safeLoad(readFileSync('invocation.yml', 'utf8'))
+    const usModel = JSON.parse(readFileSync(resolve('models', 'en-US.json'), 'utf8'))
+    const im = buildModelForLocale(invocationJson, 'en-US', intentsJson, typesJson)
     expect(im).toEqual(usModel)
   })
 })

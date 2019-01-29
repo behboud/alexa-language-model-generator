@@ -1,6 +1,9 @@
 item:
   'en-US':
-    - snow golem
+    - snow golem:
+      - ice golem
+      - spice golem
+      - rice golem
     - pillar quartz block
     - firework rocket
   'en-GB':
