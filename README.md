@@ -46,6 +46,10 @@ spice golem
 rice golem
 ```
 
+## Slot ID's
+
+Slot id is generated as constant case using [change case](https://www.npmjs.com/package/change-case#constantcase).
+
 ## Usage as CLI
 
 `npx alexa-language-model-generator -i invocation.yml -l "en-US" -n intents.yml -t types.yml -m models`
