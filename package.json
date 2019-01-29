@@ -1,6 +1,6 @@
 {
   "name": "alexa-language-model-generator",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "",
   "keywords": [],
   "main": "dist/alexa-language-model-generator.cjs.js",
