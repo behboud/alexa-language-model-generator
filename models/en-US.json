@@ -67,15 +67,43 @@
             "recipe for an {item}",
             "receipes for {item}",
             "receipes for a {item}",
-            "receipes for an {item}",
-            "take me to",
+            "receipes for an {item}"
+          ],
+          "slots": [{ "name": "item", "samples": [], "type": "ITEM_TYPE" }]
+        },
+        {
+          "name": "NavigateIntent",
+          "samples": [
+            "Navigate to {cityus} {yesnostreet}",
+            "Navigate to {street} {cityus}",
+            "Navigate to {street}",
+            "directions to {cityus} {yesnostreet}",
+            "directions to {street} {cityus}",
+            "directions to {street}",
+            "drive me to {cityus} {yesnostreet}",
+            "drive me to {street} {cityus}",
+            "drive me to {street}",
+            "take me to {cityus} {yesnostreet}",
+            "take me to {street} {cityus}",
             "take me to {street}",
-            "take me to {housenumber} {street}"
+            "get me to {street}"
           ],
           "slots": [
-            { "name": "item", "samples": [], "type": "ITEM_TYPE" },
-            { "name": "street", "samples": [], "type": "AMAZON.StreetAddress" },
-            { "name": "housenumber", "samples": [], "type": "AMAZON.Number" }
+            {
+              "name": "cityus",
+              "samples": [],
+              "type": "AMAZON.CITY_US"
+            },
+            {
+              "name": "yesnostreet",
+              "samples": [],
+              "type": "YESNOSTREET_TYPE"
+            },
+            {
+              "name": "street",
+              "samples": ["{street}", "to {street}"],
+              "type": "AMAZON.StreetName"
+            }
           ]
         },
         { "name": "AMAZON.CancelIntent", "samples": [], "slots": [] },
@@ -102,8 +130,102 @@
             },
             { "id": "FIREWORK_ROCKET", "name": { "synonyms": [], "value": "firework rocket" } }
           ]
+        },
+        {
+          "name": "YESNOSTREET_TYPE",
+          "values": [
+            {
+              "id": "YES",
+              "name": {
+                "synonyms": ["sure", "ok", "great", "good"],
+                "value": "yes"
+              }
+            },
+            {
+              "id": "NO",
+              "name": {
+                "synonyms": ["nope", "no street", "drive", "just drive", "go"],
+                "value": "no"
+              }
+            }
+          ]
         }
       ]
-    }
+    },
+    "dialog": {
+      "intents": [
+        {
+          "name": "NavigateIntent",
+          "confirmationRequired": true,
+          "prompts": {
+            "confirmation": "Confirm.Intent.dc115c6ef1ffe5bc64777f5851607d539a2c49cf"
+          },
+          "slots": [
+            {
+              "name": "street",
+              "type": "AMAZON.StreetName",
+              "confirmationRequired": true,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.Slot.f64fe2a18fba49cb548eb6ed9ddb8efb06267bc2",
+                "confirmation": "Confirm.Slot.f64fe2a18fba49cb548eb6ed9ddb8efb06267bc2"
+              }
+            },
+            {
+              "name": "cityus",
+              "type": "AMAZON.CITY_US",
+              "confirmationRequired": false,
+              "elicitationRequired": false,
+              "prompts": {}
+            },
+            {
+              "name": "yesnostreet",
+              "type": "YESNOSTREET_TYPE",
+              "confirmationRequired": false,
+              "elicitationRequired": false,
+              "prompts": {}
+            }
+          ]
+        }
+      ],
+      "delegationStrategy": "ALWAYS"
+    },
+    "prompts": [
+      {
+        "id": "Confirm.Intent.dc115c6ef1ffe5bc64777f5851607d539a2c49cf",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "sure ?"
+          },
+          {
+            "type": "PlainText",
+            "value": "sure that you want to proceed ?"
+          },
+          {
+            "type": "PlainText",
+            "value": "please confirm"
+          }
+        ]
+      },
+      {
+        "id": "Confirm.Slot.f64fe2a18fba49cb548eb6ed9ddb8efb06267bc2",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "I heared {cityus} . Is that correct?"
+          }
+        ]
+      },
+      {
+        "id": "Elicit.Slot.f64fe2a18fba49cb548eb6ed9ddb8efb06267bc2",
+        "variations": [
+          {
+            "type": "PlainText",
+            "value": "Which street?"
+          }
+        ]
+      }
+    ]
   }
 }
