@@ -1,7 +1,19 @@
+export interface IDialog {
+  [key: string]: IDialogEntry | null
+}
+
+export interface IDialogEntry {
+  prompts: string[]
+  samples: string[]
+  confirm?: string[]
+}
+
+export type Dialog = IDialog | string
+
+export type DelegateFeature = 'autodelegate' | 'confirm' | 'elicit'
+
 export interface IIntentAndTypeGrammar {
-  [name: string]: {
-    [locale: string]: string[]
-  }
+  [name: string]: { [key in Locale | DelegateFeature]: Dialog[] }
 }
 
 export type InvocationName = { [key in Locale]: string }
@@ -83,6 +95,7 @@ export type Locale =
   | 'es-MX'
   | 'fr-FR'
   | 'it-IT'
+
 export type Countries =
   | 'DE'
   | 'AU'
@@ -166,21 +179,32 @@ export interface SmapiDialogSlots {
   type: string
   confirmationRequired?: boolean
   elicitationRequired?: boolean
-  prompts?: Map<'elicitation' | 'confirmation', string>
+  prompts?: SmapiDialogSlotsPromptType
+}
+
+export interface SmapiDialogSlotsPromptType {
+  ['elicitation']?: string
+  ['confirmation']?: string
 }
 
 export interface SmapiDialogIntents {
   name: string
   confirmationRequired?: boolean
-  prompts?: Map<'confirmation', string>
+  prompts?: SmapiDialogIntentsPromptType
   slots?: Array<SmapiDialogSlots>
+  delegationStrategy?: 'ALWAYS' | 'SKILL_RESPONSE'
+}
+
+export interface SmapiDialogIntentsPromptType {
+  ['confirmation']: string
 }
 
 export interface SmapiDialog {
   intents: Array<SmapiDialogIntents>
+  delegationStrategy: 'ALWAYS' | 'SKILL_RESPONSE'
 }
 
-declare interface SmapiModelPromptVariation {
+export interface SmapiModelPromptVariation {
   type: 'PlainText'
   value: string
 }

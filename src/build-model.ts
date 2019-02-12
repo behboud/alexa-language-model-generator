@@ -8,8 +8,17 @@ import {
   IIntentAndTypeGrammar,
   SmapiLanguageModelIntent,
   SmapiSlotTypes,
-  InvocationName
+  InvocationName,
+  IDialog,
+  SmapiModelPrompt,
+  SmapiModelPromptVariation,
+  SmapiDialog,
+  SmapiDialogIntents,
+  IDialogEntry,
+  SmapiDialogSlotsPromptType,
+  SmapiDialogSlots
 } from './index.d'
+import * as hash from 'object-hash'
 
 export const languageModelParser = (): peg.Parser => {
   try {
@@ -20,77 +29,314 @@ export const languageModelParser = (): peg.Parser => {
   }
 }
 
+Object.defineProperty(Array.prototype, 'flat', {
+  value: function(depth = 1) {
+    return this.reduce(function(flat: any, toFlatten: any) {
+      return flat.concat(
+        Array.isArray(toFlatten) && depth - 1 ? toFlatten.flat(depth - 1) : toFlatten
+      )
+    }, [])
+  }
+})
+
+const isString = (str: string | object) => typeof str === 'string' || str instanceof String
+
 export const buildModelForLocale = (
   invocations: InvocationName,
   locale: Locale,
-  intents: IIntentAndTypeGrammar,
-  types: IIntentAndTypeGrammar
+  intentsFromGrammar: IIntentAndTypeGrammar,
+  typesFromGrammar: IIntentAndTypeGrammar
 ): SmapiInteractionModel => {
-  const customIntents = Object.keys(intents).map(intentName => {
-    let textArray: string[] = []
+  const { intents, prompts, dialog } = buildSampleUtterances(
+    intentsFromGrammar,
+    locale,
+    typesFromGrammar
+  )
+  if (intents.length === 0) {
+    throw new Error(`No intents defined for locale ${locale}`)
+  }
+  const customTypes = buildCustomTypes(typesFromGrammar, locale)
+  if (invocations[locale] === undefined) {
+    throw new Error('No invocation name defined for locale ' + locale)
+  }
+  const interactionModel: SmapiInteractionModel = {
+    interactionModel: {
+      languageModel: {
+        invocationName: invocations[locale],
+        intents: [...intents],
+        types: [...customTypes]
+      }
+    }
+  }
+  if (prompts && dialog && prompts.length > 0) {
+    interactionModel.interactionModel['prompts'] = prompts
+  }
+  if (dialog && dialog.intents.length > 0) {
+    interactionModel.interactionModel['dialog'] = dialog
+  }
+  return interactionModel
+}
+
+function buildSampleUtterances(
+  intentFromGrammar: IIntentAndTypeGrammar,
+  locale: Locale,
+  typesFromGrammar: IIntentAndTypeGrammar
+): { intents: SmapiLanguageModelIntent[]; prompts?: SmapiModelPrompt[]; dialog?: SmapiDialog } {
+  const prompts: SmapiModelPrompt[] = []
+  const dialog: SmapiDialog = { intents: [], delegationStrategy: 'ALWAYS' }
+  const intents = Object.keys(intentFromGrammar).map(intentName => {
     const intent: SmapiLanguageModelIntent = {
       name: intentName,
       samples: [],
       slots: []
     }
-    if (intents[intentName] && intents[intentName][locale]) {
-      textArray = intents[intentName][locale]
+    if (!intentFromGrammar[intentName] || !intentFromGrammar[intentName][locale]) {
+      // AMAZON built-ins do not require sample utterances
+      if (intentName.startsWith('AMAZON')) {
+        return intent
+      }
+      throw new Error(`No utterances defined for ${locale} inside intent ${intentName}`)
     }
-    textArray.map(text => {
-      const lp = languageModelParser().parse(text)
-      if (lp instanceof Array) {
-        lp.map((sampleArrayOfArray: Array<string>) => {
-          const sampleUtterance = sampleArrayOfArray
-            .reduce((prev: string, curr: string): string => {
-              const re = /\{[^}]*?\}/g
-              if (curr) {
-                const matchedSlots = curr.match(re)
-                if (matchedSlots) {
-                  matchedSlots.filter(Boolean).forEach((slt: string) => {
-                    const typeVar = slt.substring(1, slt.length - 1)
-                    let slot = {
-                      name: typeVar.toLowerCase(),
-                      type: typeVar.toUpperCase() + '_TYPE',
-                      samples: []
-                    }
-                    if (
-                      types &&
-                      (typeof types[typeVar] === 'string' || types[typeVar] instanceof String)
-                    ) {
-                      const name = types[typeVar] as any
-                      slot = {
-                        name: typeVar.toLowerCase(),
-                        type: name,
-                        samples: []
-                      }
-                    }
-                    if (
-                      intent.slots &&
-                      intent.slots.filter(sltSlot => sltSlot.name === slot.name).length === 0
-                    ) {
-                      intent.slots.push(slot)
-                    }
-                    slt = slt.toLowerCase()
-                  })
-                }
-              }
-              if (curr === ' ') return prev.trimLeft() + curr.trimRight()
 
-              return prev.trimLeft() + curr.trimRight() + ' '
-            }, '')
-            .trim()
-          if (intent.samples) {
-            intent.samples.push(sampleUtterance)
+    const utteranceArray = intentFromGrammar[intentName][locale]
+    return utteranceArray
+      .map(sampleUtteranceRaw => {
+        if (typeof sampleUtteranceRaw === 'string') {
+          return parseAndBuildSampleUtterancesFromGrammar(sampleUtteranceRaw, typesFromGrammar)
+        } else {
+          // this contains dialog
+          // extract it from the object key
+          const text = Object.keys(sampleUtteranceRaw)[0]
+          const samplesForDialogs = parseAndBuildSampleUtterancesFromGrammar(text, typesFromGrammar)
+          // any dialog features used?
+          const filterDialogFeature = (x: object) =>
+            Object.entries(x).filter(d => d[0].startsWith('+'))
+
+          // dialog features can be set at intent level for all locales or per language level
+          const dialogFeatures = filterDialogFeature(intentFromGrammar[intentName])
+
+          // delegation strategy
+          const delegate = dialogFeatures.find(s => s[0].includes('delegat'))
+          if (delegate && delegate.length > 0) {
+            dialog.delegationStrategy = ['yes', true].includes(delegate.pop())
+              ? 'ALWAYS'
+              : 'SKILL_RESPONSE'
+          }
+
+          const confirmationRequired = dialogFeatures.find(s => s[0].includes('confirm'))
+          if (confirmationRequired) {
+            const rawPrompts: string[] = confirmationRequired.pop()
+            const variationsFromConfirmation = extractVariationsFromPrompts(
+              rawPrompts,
+              typesFromGrammar
+            )
+            // add prompts to the interaction model part of prompts
+            const confirmationPrompt: SmapiModelPrompt = {
+              id: `Confirm.Intent.${hash(intentName)}`,
+              variations: variationsFromConfirmation
+            }
+            prompts.push(confirmationPrompt)
+          }
+          // build dialog delegation
+          const dialogIntent: SmapiDialogIntents = {
+            name: intentName,
+            confirmationRequired: confirmationRequired !== undefined,
+            prompts: {
+              confirmation: `Confirm.Intent.${hash(intentName)}`
+            },
+            slots: []
+          }
+          dialog.intents.push(dialogIntent)
+          // build samples for slots that have dialog delegates
+          Object.keys(sampleUtteranceRaw)
+            .filter(slotName => sampleUtteranceRaw[slotName] !== null)
+            .forEach(slotName => {
+              const slotObject = sampleUtteranceRaw[slotName]
+              if (slotObject && slotObject.samples) {
+                slotObject.samples.forEach(sample => {
+                  const slotSamples = parseAndBuildSampleUtterancesFromGrammar(
+                    sample,
+                    typesFromGrammar
+                  )
+                  samplesForDialogs.slots!.find(slot => slot.name === slotName)!.samples =
+                    slotSamples.samples
+                })
+                const slotPrompts: SmapiDialogSlotsPromptType = {}
+                const promptVariations = extractVariations(slotObject.prompts, typesFromGrammar)
+                if (slotObject.confirm) {
+                  const confirmVariations = extractVariations(slotObject.confirm, typesFromGrammar)
+                  prompts.push({
+                    id: `Confirm.Slot.${hash(slotName)}`,
+                    variations: confirmVariations
+                  })
+                  slotPrompts['confirmation'] = `Confirm.Slot.${hash(slotName)}`
+                }
+                prompts.push({
+                  id: `Elicit.Slot.${hash(slotName)}`,
+                  variations: promptVariations
+                })
+                slotPrompts['elicitation'] = `Elicit.Slot.${hash(slotName)}`
+
+                dialogIntent.slots!.push({
+                  name: slotName,
+                  type: samplesForDialogs.slots!.find(slot => slot.name === slotName)!.type,
+                  confirmationRequired: !!slotObject.confirm,
+                  elicitationRequired: slotObject.prompts.length > 0,
+                  prompts: slotPrompts
+                })
+              }
+            })
+          // add rest of dialog slots
+          const restOfDialogIntentSlots = samplesForDialogs
+            .slots!.filter(slot => !Object.keys(sampleUtteranceRaw).includes(slot.name))
+            .forEach(slot => {
+              dialogIntent.slots!.push({
+                name: slot.name,
+                type: slot.type,
+                confirmationRequired: false,
+                elicitationRequired: false,
+                prompts: {}
+              })
+            })
+          return samplesForDialogs
+        }
+      })
+      .reduce(
+        (aggr, { samples, slots }) => {
+          return (aggr = {
+            ...aggr,
+            samples: [...aggr.samples, ...samples],
+            slots: aggr.slots!.concat(slots!.filter(x => !aggr.slots!.some(y => y.name === x.name)))
+          })
+        },
+        { name: intentName, samples: [], slots: [] }
+      )
+  })
+
+  return { intents, prompts, dialog }
+}
+
+function extractVariations(rawVariations: string[], typesFromGrammar: IIntentAndTypeGrammar) {
+  return rawVariations.reduce(
+    (aggr, prompt) => {
+      const promptSamples = parseAndBuildSampleUtterancesFromGrammar(prompt, typesFromGrammar)
+      return aggr.concat(
+        promptSamples!.samples!.map(variation => {
+          return { type: 'PlainText', value: variation }
+        })
+      )
+    },
+    [] as any
+  )
+}
+
+function extractVariationsFromPrompts(
+  rawPrompts: string[],
+  typesFromGrammar: IIntentAndTypeGrammar
+): SmapiModelPromptVariation[] {
+  const arrayOfPrompts = rawPrompts
+    .map(samplePromptRaw => {
+      const sampleUtt = parseAndBuildSampleUtterancesFromGrammar(samplePromptRaw, typesFromGrammar)
+        .samples
+      if (sampleUtt && sampleUtt.length > 0) {
+        return sampleUtt.map(s => {
+          return {
+            type: 'PlainText',
+            value: s
           }
         })
-      } else {
-        if (intent.samples) {
-          intent.samples.push(text)
-        }
       }
     })
+    .flat()
+
+  if (!arrayOfPrompts) {
+    throw new Error(
+      `The dialog definition containts prompts definition but no valid prompts for ${rawPrompts}`
+    )
+  }
+
+  return arrayOfPrompts
+}
+
+function extractSlotVariables(utterance: string): string[] {
+  // regex to find slots in the sample utterance
+  const re = /\{[^}]*?\}/g
+  if (utterance.length > 0) {
+    const matchedSlots = utterance.match(re)
+    // we have slots in the sample utterance
+    if (matchedSlots) {
+      // filter empty entries (pegjs grammar thing)
+      return matchedSlots.filter(Boolean).map(slt => slt.substring(1, slt.length - 1))
+    }
+  }
+  return []
+}
+
+function parseAndBuildSampleUtterancesFromGrammar(
+  sampleUtteranceRaw: string,
+  types: IIntentAndTypeGrammar | null = null
+): SmapiLanguageModelIntent {
+  const intent: SmapiLanguageModelIntent = {
+    name: 'intentName',
+    samples: [],
+    slots: []
+  }
+  if (sampleUtteranceRaw.startsWith('+')) {
+    // dialog feature only
     return intent
-  })
+  }
+  const lp = languageModelParser().parse(sampleUtteranceRaw)
+  if (isString(lp)) {
+    // not an Array just text, so push it to the list
+    if (intent.samples) {
+      intent.samples.push(sampleUtteranceRaw)
+    }
+  }
+  if (lp instanceof Array) {
+    // array of all possible sample utterances per pegjs
+    lp.forEach((sampleArrayOfArray: Array<string>) => {
+      const sampleUtterance = sampleArrayOfArray
+        .reduce((prev: string, curr: string): string => {
+          const matchedSlots = extractSlotVariables(curr)
+          matchedSlots.forEach((typeVar: string) => {
+            let slot = {
+              name: typeVar.toLowerCase(),
+              type: typeVar.toUpperCase() + '_TYPE',
+              samples: []
+            }
+            if (types && isString(types[typeVar])) {
+              const name = types[typeVar] as any
+              slot = {
+                name: typeVar.toLowerCase(),
+                type: name,
+                samples: []
+              }
+            }
+            if (
+              intent.slots &&
+              intent.slots.filter(sltSlot => sltSlot.name === slot.name).length === 0
+            ) {
+              intent.slots.push(slot)
+            }
+          })
+
+          if (curr === ' ') {
+            return prev.trimLeft() + curr.trimRight()
+          }
+          return prev.trimLeft() + curr.trimRight() + ' '
+        }, '')
+        .trim()
+      if (intent.samples) {
+        intent.samples.push(sampleUtterance)
+      } else {
+        intent.samples = [sampleUtterance]
+      }
+    })
+  }
+  return intent
+}
+
+function buildCustomTypes(types: IIntentAndTypeGrammar, locale: string) {
   let customTypes: any = []
   if (types) {
     customTypes = Object.keys(types)
@@ -106,7 +352,6 @@ export const buildModelForLocale = (
         if (Object.keys(typeValues).filter(typeValue => typeValue === locale).length > 0) {
           typeValues = typeValues[locale]
         }
-
         typeValues.map((valueName: string | { [key: string]: string }) => {
           let synonyms: string[] = []
           let vName = ''
@@ -129,18 +374,5 @@ export const buildModelForLocale = (
       })
       .filter(s => s !== undefined)
   }
-  if (invocations[locale] === undefined) {
-    throw new Error('No invocation name defined for locale ' + locale)
-  } else {
-    const interactionModel: SmapiInteractionModel = {
-      interactionModel: {
-        languageModel: {
-          invocationName: invocations[locale],
-          intents: [...customIntents],
-          types: [...customTypes]
-        }
-      }
-    }
-    return interactionModel
-  }
+  return customTypes
 }

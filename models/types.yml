@@ -14,5 +14,18 @@ item:
     - Schneegolem
     - Quarzsäule
     - Feuerwerksrakete
-street: AMAZON.StreetAddress
-housenumber: AMAZON.Number
+street: AMAZON.StreetName
+cityus: AMAZON.CITY_US
+yesnostreet:
+  'en-US':
+    - yes:
+      - sure
+      - ok
+      - great
+      - good
+    - no:
+      - nope
+      - no street
+      - drive
+      - just drive
+      - go
