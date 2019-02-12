@@ -1,6 +1,6 @@
 {
   "name": "alexa-language-model-generator",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "",
   "keywords": [],
   "main": "dist/alexa-language-model-generator.cjs.js",
@@ -24,8 +24,8 @@
     "prebuild": "rimraf dist",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
     "start": "rollup -c rollup.config.ts -w",
-    "test": "jest --coverage",
-    "test:watch": "jest --coverage --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
     "test:prod": "npm run lint && npm run test -- --no-cache",
     "deploy-docs": "ts-node tools/gh-pages-publish",
     "report-coverage": "cat ./coverage/lcov.info | coveralls",
@@ -72,6 +72,9 @@
     },
     "collectCoverageFrom": [
       "src/*.{js,ts}"
+    ],
+    "setupFiles": [
+      "core-js"
     ]
   },
   "prettier": {
@@ -128,9 +131,11 @@
     "typescript": "^3.2.4"
   },
   "dependencies": {
+    "@types/object-hash": "^1.2.0",
     "change-case": "^3.1.0",
     "commander": "^2.19.0",
     "js-yaml": "^3.12.1",
+    "object-hash": "^1.3.1",
     "pegjs": "^0.10.0"
   }
 }
