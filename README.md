@@ -46,6 +46,61 @@ spice golem
 rice golem
 ```
 
+## Intent File
+
+Your intent file includes all the intents and the sample utterances like the following:
+
+```
+RecipeIntent:
+  'en-US':
+    - how (can|do) (I|you) (build|craft|get|make) (|a|an) {item}
+    - how is (|a|an) {item} (built|crafted|made)
+    - (recipe|receipes) for (|a|an) {item}
+```
+
+In this case only locale en-US is defined.
+
+### Dialogs
+
+Adding dialog features requires the following syntax:
+
+- End any of the sample utterance where you would like to have slot elicitation or delegation with a colon `:`
+- Add the slot name
+- Add keys
+  - _prompts_ for all prompts that are coming from Alexa to ask the customer
+  - _samples_ for all samples the customer might say
+  - _confirm_ if you want to confirm the slot and the sample for that
+
+You can also specify auto delegation behavior and confirmation per intent.
+
+For instance:
+
+```
+NavigateIntent:
+  +autodelegate: true
+  +confirm:
+    - sure (|that you want to proceed)?
+    - please confirm
+  'en-US':
+    - (Navigate|directions|drive me|take me) to ({cityus} {yesnostreet}|{street} {cityus}|{street}):
+      street:
+        prompts:
+          - Which street?
+        samples:
+          - (|to) {street}
+        confirm:
+          - I heared {cityus}. Is that correct?
+    - get me to {street}
+```
+
+## Types File
+
+Provide the name of the slot as described in the intent file and list all entries or built-in slot values.
+
+```
+cityus: AMAZON.US_CITY
+```
+
 ## Slot ID's
 
 Slot id is generated as constant case using [change case](https://www.npmjs.com/package/change-case#constantcase).

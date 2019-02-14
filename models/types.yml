@@ -15,7 +15,7 @@ item:
     - Quarzsäule
     - Feuerwerksrakete
 street: AMAZON.StreetName
-cityus: AMAZON.CITY_US
+cityus: AMAZON.US_CITY
 yesnostreet:
   'en-US':
     - yes:

@@ -92,7 +92,7 @@
             {
               "name": "cityus",
               "samples": [],
-              "type": "AMAZON.CITY_US"
+              "type": "AMAZON.US_CITY"
             },
             {
               "name": "yesnostreet",
@@ -173,7 +173,7 @@
             },
             {
               "name": "cityus",
-              "type": "AMAZON.CITY_US",
+              "type": "AMAZON.US_CITY",
               "confirmationRequired": false,
               "elicitationRequired": false,
               "prompts": {}
