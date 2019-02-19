@@ -5,6 +5,21 @@
         {
           "name": "RecipeIntent",
           "samples": [
+            "recipe for {item}",
+            "recipe for a {item}",
+            "recipe for an {item}",
+            "receipes for {item}",
+            "receipes for a {item}",
+            "receipes for an {item}",
+            "how is {item} built",
+            "how is {item} crafted",
+            "how is {item} made",
+            "how is a {item} built",
+            "how is a {item} crafted",
+            "how is a {item} made",
+            "how is an {item} built",
+            "how is an {item} crafted",
+            "how is an {item} made",
             "how can I build {item}",
             "how can I build a {item}",
             "how can I build an {item}",
@@ -52,28 +67,14 @@
             "how do you get an {item}",
             "how do you make {item}",
             "how do you make a {item}",
-            "how do you make an {item}",
-            "how is {item} built",
-            "how is {item} crafted",
-            "how is {item} made",
-            "how is a {item} built",
-            "how is a {item} crafted",
-            "how is a {item} made",
-            "how is an {item} built",
-            "how is an {item} crafted",
-            "how is an {item} made",
-            "recipe for {item}",
-            "recipe for a {item}",
-            "recipe for an {item}",
-            "receipes for {item}",
-            "receipes for a {item}",
-            "receipes for an {item}"
+            "how do you make an {item}"
           ],
           "slots": [{ "name": "item", "samples": [], "type": "ITEM_TYPE" }]
         },
         {
           "name": "NavigateIntent",
           "samples": [
+            "get me to {street}",
             "Navigate to {cityus} {yesnostreet}",
             "Navigate to {street} {cityus}",
             "Navigate to {street}",
@@ -85,8 +86,7 @@
             "drive me to {street}",
             "take me to {cityus} {yesnostreet}",
             "take me to {street} {cityus}",
-            "take me to {street}",
-            "get me to {street}"
+            "take me to {street}"
           ],
           "slots": [
             {

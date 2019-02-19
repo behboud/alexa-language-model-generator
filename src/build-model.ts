@@ -18,7 +18,7 @@ import {
   SmapiDialogSlotsPromptType,
   SmapiDialogSlots
 } from './index.d'
-import * as hash from 'object-hash'
+import { sha1 } from 'object-hash'
 
 export const languageModelParser = (): peg.Parser => {
   try {
@@ -132,7 +132,7 @@ function buildSampleUtterances(
             )
             // add prompts to the interaction model part of prompts
             const confirmationPrompt: SmapiModelPrompt = {
-              id: `Confirm.Intent.${hash(intentName)}`,
+              id: `Confirm.Intent.${sha1(intentName)}`,
               variations: variationsFromConfirmation
             }
             prompts.push(confirmationPrompt)
@@ -142,7 +142,7 @@ function buildSampleUtterances(
             name: intentName,
             confirmationRequired: confirmationRequired !== undefined,
             prompts: {
-              confirmation: `Confirm.Intent.${hash(intentName)}`
+              confirmation: `Confirm.Intent.${sha1(intentName)}`
             },
             slots: []
           }
@@ -166,16 +166,16 @@ function buildSampleUtterances(
                 if (slotObject.confirm) {
                   const confirmVariations = extractVariations(slotObject.confirm, typesFromGrammar)
                   prompts.push({
-                    id: `Confirm.Slot.${hash(slotName)}`,
+                    id: `Confirm.Slot.${sha1(slotName)}`,
                     variations: confirmVariations
                   })
-                  slotPrompts['confirmation'] = `Confirm.Slot.${hash(slotName)}`
+                  slotPrompts['confirmation'] = `Confirm.Slot.${sha1(slotName)}`
                 }
                 prompts.push({
-                  id: `Elicit.Slot.${hash(slotName)}`,
+                  id: `Elicit.Slot.${sha1(slotName)}`,
                   variations: promptVariations
                 })
-                slotPrompts['elicitation'] = `Elicit.Slot.${hash(slotName)}`
+                slotPrompts['elicitation'] = `Elicit.Slot.${sha1(slotName)}`
 
                 dialogIntent.slots!.push({
                   name: slotName,
@@ -202,10 +202,11 @@ function buildSampleUtterances(
         }
       })
       .reduce(
-        (aggr, { samples, slots }) => {
+        (aggr: SmapiLanguageModelIntent, { samples, slots }) => {
+          samples = (samples || []).concat(aggr.samples || [])
           return (aggr = {
             ...aggr,
-            samples: [...aggr.samples, ...samples],
+            samples: [...samples],
             slots: aggr.slots!.concat(slots!.filter(x => !aggr.slots!.some(y => y.name === x.name)))
           })
         },
