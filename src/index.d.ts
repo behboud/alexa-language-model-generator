@@ -196,7 +196,7 @@ export interface SmapiDialogIntents {
 }
 
 export interface SmapiDialogIntentsPromptType {
-  ['confirmation']: string
+  ['confirmation']?: string
 }
 
 export interface SmapiDialog {

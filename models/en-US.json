@@ -106,6 +106,28 @@
             }
           ]
         },
+        {
+          "name": "NavigationDialogIntent",
+          "samples": [
+            "Navigate to {cityus}",
+            "Navigate to {street}",
+            "Navigate to {cityus} {street}",
+            "directions to {cityus}",
+            "directions to {street}",
+            "directions to {cityus} {street}",
+            "drive me to {cityus}",
+            "drive me to {street}",
+            "drive me to {cityus} {street}"
+          ],
+          "slots": [
+            { "name": "cityus", "type": "AMAZON.US_CITY", "samples": [] },
+            {
+              "name": "street",
+              "type": "AMAZON.StreetName",
+              "samples": ["{street}", "to {street}", "to the {street}"]
+            }
+          ]
+        },
         { "name": "AMAZON.CancelIntent", "samples": [], "slots": [] },
         { "name": "AMAZON.HelpIntent", "samples": [], "slots": [] },
         { "name": "AMAZON.StopIntent", "samples": [], "slots": [] },
@@ -186,6 +208,29 @@
               "prompts": {}
             }
           ]
+        },
+        {
+          "name": "NavigationDialogIntent",
+          "confirmationRequired": false,
+          "prompts": {},
+          "slots": [
+            {
+              "name": "street",
+              "type": "AMAZON.StreetName",
+              "confirmationRequired": false,
+              "elicitationRequired": true,
+              "prompts": {
+                "elicitation": "Elicit.Slot.f64fe2a18fba49cb548eb6ed9ddb8efb06267bc2"
+              }
+            },
+            {
+              "name": "cityus",
+              "type": "AMAZON.US_CITY",
+              "confirmationRequired": false,
+              "elicitationRequired": false,
+              "prompts": {}
+            }
+          ]
         }
       ],
       "delegationStrategy": "ALWAYS"
@@ -225,6 +270,10 @@
             "value": "Which street?"
           }
         ]
+      },
+      {
+        "id": "Elicit.Slot.f64fe2a18fba49cb548eb6ed9ddb8efb06267bc2",
+        "variations": [{ "type": "PlainText", "value": "Which street?" }]
       }
     ]
   }

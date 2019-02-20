@@ -141,9 +141,11 @@ function buildSampleUtterances(
           const dialogIntent: SmapiDialogIntents = {
             name: intentName,
             confirmationRequired: confirmationRequired !== undefined,
-            prompts: {
-              confirmation: `Confirm.Intent.${sha1(intentName)}`
-            },
+            prompts: confirmationRequired
+              ? {
+                  confirmation: `Confirm.Intent.${sha1(intentName)}`
+                }
+              : {},
             slots: []
           }
           dialog.intents.push(dialogIntent)

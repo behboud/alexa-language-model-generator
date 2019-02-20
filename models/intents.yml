@@ -20,6 +20,15 @@ NavigateIntent:
           - I heared {cityus}. Is that correct?
     - get me to {street}
 
+NavigationDialogIntent:
+  'en-US':
+    - (Navigate|directions|drive me) to ({cityus}|{street}|{cityus} {street}):
+      street:
+        prompts:
+          - Which street?
+        samples:
+          - (|to|to the) {street}
+
 AMAZON.CancelIntent:
 AMAZON.HelpIntent:
 AMAZON.StopIntent:
