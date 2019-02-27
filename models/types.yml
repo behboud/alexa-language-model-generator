@@ -19,10 +19,12 @@ cityus: AMAZON.US_CITY
 yesnostreet:
   'en-US':
     - yes:
-      - sure
-      - ok
-      - great
-      - good
+      id: YES
+      synonyms:
+        - sure
+        - ok
+        - great
+        - good
     - no:
       - nope
       - no street

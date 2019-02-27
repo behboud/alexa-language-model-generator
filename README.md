@@ -17,15 +17,12 @@ recipe for an {item}
 receipes for an {item}
 ```
 
-Where `{item}` refers to a custom slot containing several entities and possible synonyms. For instance:
+Where `{item}` refers to a custom slot containing several entities. For instance:
 
 ```
 item:
   'en-US':
     - snow golem:
-      - ice golem
-      - spice golem
-      - rice golem
     - pillar quartz block
     - firework rocket
   'en-GB':
@@ -36,14 +33,6 @@ item:
     - Schneegolem
     - Quarzsäule
     - Feuerwerksrakete
-```
-
-defines `snow golem` with the three synonyms
-
-```
-ice golem
-spice golem
-rice golem
 ```
 
 ## Intent File
@@ -100,6 +89,46 @@ Provide the name of the slot as described in the intent file and list all entrie
 ```
 cityus: AMAZON.US_CITY
 ```
+
+### Synonyms
+
+```
+item:
+  'en-US':
+    - snow golem:
+      - ice golem
+      - spice golem
+      - rice golem
+    - pillar quartz block
+    - firework rocket
+```
+
+defines `snow golem` with the three synonyms
+
+```
+ice golem
+spice golem
+rice golem
+```
+
+id of the synonym is set to [constant case](https://github.com/blakeembrey/constant-case) of the value name. So in the above case it is `SNOW_GOLEM`.
+
+It is also possible to define your own id by changing the above definition to
+
+```
+item:
+  'en-US':
+    - snow golem:
+      id: GOLEM
+      synonyms:
+        - ice golem
+        - spice golem
+        - rice golem
+    - pillar quartz block
+    - firework rocket
+```
+
+Now the id is explicitly set to `GOLEM`.
 
 ## Slot ID's
 

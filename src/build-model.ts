@@ -358,15 +358,18 @@ function buildCustomTypes(types: IIntentAndTypeGrammar, locale: string) {
         typeValues.map((valueName: string | { [key: string]: string }) => {
           let synonyms: string[] = []
           let vName = ''
+          let id = ''
           if (typeof valueName === 'object') {
             vName = Object.keys(valueName)[0]
-            const values = Object.values(valueName)
+            const values = valueName.synonyms || valueName.synonym || Object.values(valueName)
+            id = valueName.id || constantCase(vName)
             synonyms = synonyms.concat(...values)
           } else {
             vName = valueName
+            id = constantCase(vName)
           }
           slotType.values.push({
-            id: constantCase(vName),
+            id,
             name: {
               value: vName,
               synonyms
