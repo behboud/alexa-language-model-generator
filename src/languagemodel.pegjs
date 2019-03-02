@@ -45,4 +45,18 @@ _ "whitespace"
 = [ \t\n\r]*
 
 Word
-= _ word:$([A-Za-z0-9 \' \? \! \ü \ö \ä \ß \. \,])+ _ { return word; }
+= _ word:$(
+	[A-Za-z0-9 \' \? \! \. \,]
+    /
+    [\u00C0-\u00FF] //https://unicode-table.com/de/blocks/latin-1-supplement/
+    /
+    [\u0100-\u017f] //https://unicode-table.com/de/blocks/latin-extended-a/
+    /
+    [\u0180-\u024f] //https://unicode-table.com/de/blocks/latin-extended-b/
+    /
+    [\u4e00-\u9fbf] //https://en.wikipedia.org/wiki/Japanese_writing_system Kanji
+    /
+    [\u3040-\u309F] //https://en.wikipedia.org/wiki/Japanese_writing_system Hiragana
+    /
+    [\u30A0-\u30FF] //https://en.wikipedia.org/wiki/Japanese_writing_system Katakana
+    )+ _ { return word; }
