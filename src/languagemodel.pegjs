@@ -46,9 +46,11 @@ _ "whitespace"
 
 Word
 = _ word:$(
-	[A-Za-z0-9 \' \? \! \. \,]
+	[\u0020-\u0027] // https://unicode-table.com/de/blocks/basic-latin/ exclude '(' and ')'
     /
-    [\u00C0-\u00FF] //https://unicode-table.com/de/blocks/latin-1-supplement/
+	[\u002a-\u007a] // https://unicode-table.com/de/blocks/basic-latin/ exclude '{','|' and '}'
+    /
+    [\u00a1-\u00ff] //https://unicode-table.com/de/blocks/latin-1-supplement/
     /
     [\u0100-\u017f] //https://unicode-table.com/de/blocks/latin-extended-a/
     /
