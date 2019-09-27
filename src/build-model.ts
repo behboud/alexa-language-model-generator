@@ -304,7 +304,7 @@ function parseAndBuildSampleUtterancesFromGrammar(
     // dialog feature only
     return intent
   }
-  const lp = languageModelParser().parse(sampleUtteranceRaw)
+  let lp = languageModelParser().parse(sampleUtteranceRaw)
   if (isString(lp)) {
     // not an Array just text, so push it to the list
     if (intent.samples) {
@@ -312,6 +312,9 @@ function parseAndBuildSampleUtterancesFromGrammar(
     }
   }
   if (lp instanceof Array) {
+    if (!Array.isArray(lp[0])) {
+      lp = [lp]
+    }
     // array of all possible sample utterances per pegjs
     lp.forEach((sampleArrayOfArray: Array<string>) => {
       const sampleUtterance = sampleArrayOfArray
@@ -375,7 +378,7 @@ function buildCustomTypes(types: IIntentAndTypeGrammar, locale: string) {
           let synonyms: string[] = []
           let vName = ''
           let id = ''
-          if (typeof valueName === 'object') {
+          if (valueName && typeof valueName === 'object') {
             vName = Object.keys(valueName)[0]
             const values = valueName.synonyms || valueName.synonym || Object.values(valueName)
             id = valueName.id || constantCase(vName)
