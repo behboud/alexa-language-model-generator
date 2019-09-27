@@ -30,7 +30,7 @@ export const languageModelParser = (): peg.Parser => {
 }
 
 Object.defineProperty(Array.prototype, 'flat', {
-  value: function(depth = 1) {
+  value: function(depth: number = 1) {
     return this.reduce(function(flat: any, toFlatten: any) {
       return flat.concat(
         Array.isArray(toFlatten) && depth - 1 ? toFlatten.flat(depth - 1) : toFlatten
@@ -160,8 +160,22 @@ function buildSampleUtterances(
                     sample,
                     typesFromGrammar
                   )
-                  samplesForDialogs.slots!.find(slot => slot.name === slotName)!.samples =
-                    slotSamples.samples
+                  const matchingSlot = samplesForDialogs.slots!.find(slot => slot.name === slotName)
+
+                  if (
+                    matchingSlot &&
+                    slotSamples &&
+                    slotSamples.slots &&
+                    slotSamples.slots.length > 0 &&
+                    samplesForDialogs &&
+                    samplesForDialogs.slots &&
+                    samplesForDialogs.slots.length > 0
+                  ) {
+                    // replace the exmpty slot samples array with the one we built
+                    samplesForDialogs.slots[
+                      samplesForDialogs.slots.findIndex(slot => slot.name === matchingSlot.name)
+                    ].samples = slotSamples.samples
+                  }
                 })
                 const slotPrompts: SmapiDialogSlotsPromptType = {}
                 const promptVariations = extractVariations(slotObject.prompts, typesFromGrammar)
@@ -178,7 +192,9 @@ function buildSampleUtterances(
                   variations: promptVariations
                 })
                 slotPrompts['elicitation'] = `Elicit.Slot.${sha1(slotName)}`
-
+                if (!samplesForDialogs.slots!.find(slot => slot.name === slotName)) {
+                  console.error('Unable to match slot name: ' + slotName)
+                }
                 dialogIntent.slots!.push({
                   name: slotName,
                   type: samplesForDialogs.slots!.find(slot => slot.name === slotName)!.type,
